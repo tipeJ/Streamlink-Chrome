@@ -54,20 +54,20 @@ def read_thread_func(aq):
 
     if aq:
       decodedJson = json.loads(text)
-      window = NativeMessagingWindow(aq)
-      window.master.title('Streamlink-Chrome')
-      window.master.geometry("130x75")
-      window.master.lift()
-      window.master.attributes("-topmost", True)
+      # window = NativeMessagingWindow(aq)
+      # window.master.title('Streamlink-Chrome')
+      # window.master.geometry("130x75")
+      # window.master.lift()
+      # window.master.attributes("-topmost", True)
 
-      window.mainloop()
+      # window.mainloop()
       
-      #aq.put(decodedJson['text'])
-      #process = subprocess.Popen(['streamlink', 'twitch.tv/%s' % decodedJson['text'], '1080p60'],
-      #               stdout=subprocess.PIPE, 
-      #               stderr=subprocess.PIPE)
-      #stdout, stderr = process.communicate()
-      #stdout, stderr
+      aq.put(decodedJson['text'])
+      process = subprocess.Popen(['streamlink', decodedJson['text'], 'best'],
+                    stdout=subprocess.PIPE, 
+                    stderr=subprocess.PIPE)
+      stdout, stderr = process.communicate()
+      stdout, stderr
     else:
       # In headless mode just send an echo message back.
       send_message('{"echo": %s}' % decodedJson['text'])

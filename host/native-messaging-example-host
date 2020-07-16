@@ -1,0 +1,129 @@
+#!/usr/bin/env python
+# Copyright (c) 2012 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# A simple native messaging host. Shows a tkinter dialog with incoming messages
+# that also allows to send message back to the webapp.
+
+import struct
+import sys
+import threading
+import queue
+from tkinter import *
+import tkinter
+import subprocess
+import json
+import time
+
+
+# On Windows, the default I/O mode is O_TEXT. Set this to O_BINARY
+# to avoid unwanted modifications of the input/output streams.
+if sys.platform == "win32":
+  import os, msvcrt
+  msvcrt.setmode(sys.stdin.fileno(), os.O_BINARY)
+  msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
+
+# Helper function that sends a message to the webapp.
+def send_message(message):
+   # Write message size.
+  encoded_content = message.encode("utf-8")
+  encoded_length = struct.pack('=I', len(encoded_content))
+  # Write the message itself.
+  sys.stdout.buffer.write(encoded_length)
+  sys.stdout.buffer.write(struct.pack(str(len(encoded_content))+"s",encoded_content))
+  sys.stdout.buffer.flush()
+
+# Thread that reads messages from the webapp.
+def read_thread_func(aq):
+  message_number = 0
+  while 1:
+    # Read the message length (first 4 bytes).
+    text_length_bytes = sys.stdin.buffer.read(4)
+
+    if len(text_length_bytes) == 0:
+      if aq:
+        aq.put(None)
+      sys.exit(0)
+
+    # Unpack message length as 4 byte integer.
+    text_length = struct.unpack('=I', text_length_bytes)[0]
+
+    # Read the text (JSON object) of the message.
+    text = sys.stdin.buffer.read(text_length).decode('utf-8')
+
+    if aq:
+      decodedJson = json.loads(text)
+      window = NativeMessagingWindow(aq)
+      window.master.title('Streamlink-Chrome')
+      window.master.geometry("130x75")
+      window.master.lift()
+      window.master.attributes("-topmost", True)
+
+      window.mainloop()
+      
+      #aq.put(decodedJson['text'])
+      #process = subprocess.Popen(['streamlink', 'twitch.tv/%s' % decodedJson['text'], '1080p60'],
+      #               stdout=subprocess.PIPE, 
+      #               stderr=subprocess.PIPE)
+      #stdout, stderr = process.communicate()
+      #stdout, stderr
+    else:
+      # In headless mode just send an echo message back.
+      send_message('{"echo": %s}' % decodedJson['text'])
+
+if tkinter:
+  class NativeMessagingWindow(tkinter.Frame):
+    def __init__(self, queue):
+
+      tkinter.Frame.__init__(self)
+      self.pack()
+
+      self.text = tkinter.Text(self)
+      self.text.config(state=tkinter.DISABLED, height=10, width=40)
+
+      OPTIONS = [
+        "Jan",
+        "Feb",
+        "Mar"
+      ]
+
+      dropdown = tkinter.StringVar(self.master)
+      dropdown.set(OPTIONS[0]) # Default value for dropdown list
+
+      w = OptionMenu(self.master, dropdown, *OPTIONS)
+      w.pack(padx=5, pady=10, side=tkinter.LEFT)
+
+      sendButton = tkinter.Button(self.master, text="Send", command=self.onSend)
+      sendButton.pack(padx=5, pady=10, side=tkinter.LEFT)
+
+    def handle_focus(self, event):
+      if event.widget == self.master:
+          self.master.focus_set()
+
+    def onSend(self, message):
+      print(message)
+
+
+def Main():
+
+  aq = queue.Queue()
+
+
+  thread = threading.Thread(target=read_thread_func, args=(aq,))
+  thread.daemon = True
+  thread.start()
+
+
+  while True:
+    if not aq.empty:
+      print("Received %s" % aq.get_nowait)
+      
+      
+    time.sleep(0.1)
+
+  sys.exit(0)
+
+
+if __name__ == '__main__':
+  Main()

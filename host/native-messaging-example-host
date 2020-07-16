@@ -34,6 +34,13 @@ def send_message(message):
   sys.stdout.buffer.write(struct.pack(str(len(encoded_content))+"s",encoded_content))
   sys.stdout.buffer.flush()
 
+def launch_stream(url, quality):
+  process = subprocess.Popen(['streamlink', url, quality],
+    stdout=subprocess.PIPE, 
+    universal_newlines=True)
+  stdout, stderr = process.communicate()
+  stdout, stderr
+
 # Thread that reads messages from the webapp.
 def read_thread_func(aq):
   message_number = 0
@@ -54,56 +61,61 @@ def read_thread_func(aq):
 
     if aq:
       decodedJson = json.loads(text)
-      # window = NativeMessagingWindow(aq)
-      # window.master.title('Streamlink-Chrome')
-      # window.master.geometry("130x75")
-      # window.master.lift()
-      # window.master.attributes("-topmost", True)
+      url = decodedJson['url']
+      quality = decodedJson['quality']
+      if (quality != ''):
+        launch_stream(url, quality)
+      else:
+        send_message('{"START": "ASD"}')
+        
+        aq.put(url)
+        process = subprocess.Popen(['streamlink', url],
+          stdout=subprocess.PIPE, 
+          universal_newlines=True)
 
-      # window.mainloop()
-      
-      aq.put(decodedJson['text'])
-      process = subprocess.Popen(['streamlink', decodedJson['text'], 'best'],
-                    stdout=subprocess.PIPE, 
-                    stderr=subprocess.PIPE)
-      stdout, stderr = process.communicate()
-      stdout, stderr
+        response = process.stdout.readlines()
+        if (len(response) != 1): # Check that process returned available streams.
+          availableStreams = response[1].strip()
+          for r in ["Available streams: ", " (best)", " (worst)"]: # Remove useless info.
+            availableStreams = availableStreams.replace(r, "")
+          streamsList = availableStreams.split(', ')
+
+          # Show quality options popup window
+          window = NativeMessagingWindow(url, aq, streamsList)
+          window.master.title('Streamlink-Chrome')
+          window.master.geometry("175x75")
+          window.master.lift()
+          window.master.attributes("-topmost", True)
+
+          window.mainloop()
     else:
       # In headless mode just send an echo message back.
-      send_message('{"echo": %s}' % decodedJson['text'])
+      send_message('{"echo": %s}' % decodedJson['url'])
 
 if tkinter:
   class NativeMessagingWindow(tkinter.Frame):
-    def __init__(self, queue):
+    def __init__(self, url, queue, OPTIONS):
 
       tkinter.Frame.__init__(self)
       self.pack()
 
+      self.url = url
+
       self.text = tkinter.Text(self)
       self.text.config(state=tkinter.DISABLED, height=10, width=40)
 
-      OPTIONS = [
-        "Jan",
-        "Feb",
-        "Mar"
-      ]
+      self.dropdown = tkinter.StringVar(self.master)
+      self.dropdown.set(OPTIONS[0]) # Default value for dropdown list
 
-      dropdown = tkinter.StringVar(self.master)
-      dropdown.set(OPTIONS[0]) # Default value for dropdown list
-
-      w = OptionMenu(self.master, dropdown, *OPTIONS)
+      w = OptionMenu(self.master, self.dropdown, *OPTIONS)
       w.pack(padx=5, pady=10, side=tkinter.LEFT)
 
-      sendButton = tkinter.Button(self.master, text="Send", command=self.onSend)
+      sendButton = tkinter.Button(self.master, text="Launch", command=self.selectQuality)
       sendButton.pack(padx=5, pady=10, side=tkinter.LEFT)
 
-    def handle_focus(self, event):
-      if event.widget == self.master:
-          self.master.focus_set()
-
-    def onSend(self, message):
-      print(message)
-
+    def selectQuality(self):
+      launch_stream(self.url, self.dropdown.get())
+      self.master.destroy()
 
 def Main():
 

@@ -30,7 +30,10 @@ function updateUiState() {
 }
 
 function sendNativeMessage() {
-  message = {"text": document.getElementById('input-text').value};
+  message = {
+    "url": document.getElementById('input-text').value,
+    "quality": ''
+  };
   port.postMessage(message);
   appendMessage("Sent message: <b>" + JSON.stringify(message) + "</b>");
 }

@@ -8,19 +8,19 @@ chrome.runtime.onInstalled.addListener(function() {
         fetch(allowedDomainsUrl).then((response) => {
             response.text().then(function (text) {
                 var domainsList = text.split('\n');
-                var conditions = [];
+                var urlConditions = [];
                 for (i = 0; i < domainsList.length; i++) {
-                    conditions.push(new chrome.declarativeContent.PageStateMatcher({
+                    urlConditions.push(new chrome.declarativeContent.PageStateMatcher({
                         pageUrl: { urlContains: domainsList[i] },
-                        }));
+                    }));
                 }
                 var newRule = {
                     // That fires when a page's URL contains one of the supported commands.
-                    conditions: conditions,
+                    conditions: urlConditions,
                     // And shows the extension's page action.
                     actions: [ new chrome.declarativeContent.ShowPageAction() ]
                 };
-                chrome.extension.getBackgroundPage().console.log(conditions.toString());
+                chrome.extension.getBackgroundPage().console.log(urlConditions.toString());
                 chrome.declarativeContent.onPageChanged.addRules([newRule]);
             });
         });

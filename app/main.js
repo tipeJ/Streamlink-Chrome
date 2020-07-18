@@ -19,11 +19,9 @@ function appendMessage(text) {
 
 function updateUiState() {
   if (port) {
-    document.getElementById('connect-button').style.display = 'none';
     document.getElementById('input-text').style.display = 'block';
     document.getElementById('send-message-button').style.display = 'block';
   } else {
-    document.getElementById('connect-button').style.display = 'block';
     document.getElementById('input-text').style.display = 'none';
     document.getElementById('send-message-button').style.display = 'none';
   }
@@ -58,8 +56,7 @@ function connect() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  document.getElementById('connect-button').addEventListener(
-      'click', connect);
+  connect();
   document.getElementById('send-message-button').addEventListener(
       'click', sendNativeMessage);
   updateUiState();

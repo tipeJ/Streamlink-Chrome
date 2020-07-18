@@ -13,7 +13,8 @@
   },
   "permissions": [
     "nativeMessaging",
-    "declarativeContent"
+    "declarativeContent",
+    "contextMenus"
   ],
   "page_action": {
     "default_popup": "main.html"

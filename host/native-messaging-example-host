@@ -24,9 +24,19 @@ if sys.platform == "win32":
   msvcrt.setmode(sys.stdin.fileno(), os.O_BINARY)
   msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
 
+preferences = {}
+
+def load_preferences():
+  with open('prefs.json', 'r') as file:
+    preferences = json.load(file)
+
+def save_preferences():
+  with open('prefs.json', 'r') as file:
+    json.dump(preferences, file, indent=2)
+
 # Helper function that sends a message to the webapp.
 def send_message(message):
-   # Write message size.
+  # Write message size.
   encoded_content = message.encode("utf-8")
   encoded_length = struct.pack('=I', len(encoded_content))
   # Write the message itself.
@@ -43,7 +53,6 @@ def launch_stream(url, quality):
 
 # Thread that reads messages from the webapp.
 def read_thread_func(aq):
-  message_number = 0
   while 1:
     # Read the message length (first 4 bytes).
     text_length_bytes = sys.stdin.buffer.read(4)
@@ -63,7 +72,15 @@ def read_thread_func(aq):
       decodedJson = json.loads(text)
       url = decodedJson['url']
       quality = decodedJson['quality']
-      if (quality != ''):
+      if (url == 'prefs'):
+        window = PreferencesWindow()
+        window.master.title('Streamlink-Chrome Preferences')
+        window.master.geometry("300x700")
+        window.master.lift()
+        window.master.attributes("-topmost", True)
+
+        window.mainloop()
+      elif (quality != ''):
         launch_stream(url, quality)
       else:
         send_message('{"START": "ASD"}')
@@ -82,7 +99,7 @@ def read_thread_func(aq):
 
           # Show quality options popup window
           window = NativeMessagingWindow(url, aq, streamsList)
-          window.master.title('Streamlink-Chrome')
+          window.master.title('Launch Stream')
           window.master.geometry("175x75")
           window.master.lift()
           window.master.attributes("-topmost", True)
@@ -116,8 +133,25 @@ if tkinter:
     def selectQuality(self):
       launch_stream(self.url, self.dropdown.get())
       self.master.destroy()
+      
+  class PreferencesWindow(tkinter.Frame):
+    def __init__(self):
+
+      tkinter.Frame.__init__(self)
+      self.pack()
+
+      self.text = tkinter.Text(self)
+      self.useBestQuality = IntVar(value=preferences['Use Best Quality'])
+      # tkinter.Checkbutton(self, text="Use Best Quality", variable=self.useBestQuality).grid(row=0, sticky=W)
+      self.text.config(state=tkinter.DISABLED, height=10, width=40)
+
+    def updateUiState(self):
+      self.useBestQuality = IntVar(value=preferences['Use Best Quality'])
+      self.master.refresh()
 
 def Main():
+
+  load_preferences()
 
   aq = queue.Queue()
 

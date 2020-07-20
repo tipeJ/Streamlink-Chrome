@@ -27,12 +27,14 @@ if sys.platform == "win32":
 preferences = {}
 
 def load_preferences():
-  with open('prefs.json', 'r') as file:
-    preferences = json.load(file)
+  global preferences
+  with open(os.path.join(sys.path[0], "prefs.json"), 'r') as file:
+    preferences = json.loads(file.read())
 
 def save_preferences():
-  with open('prefs.json', 'r') as file:
-    json.dump(preferences, file, indent=2)
+  global preferences
+  with open(os.path.join(sys.path[0], "prefs.json"), 'w') as file:
+    json.dump(preferences, file)
 
 # Helper function that sends a message to the webapp.
 def send_message(message):
@@ -74,10 +76,9 @@ def read_thread_func(aq):
       quality = decodedJson['quality']
       if (url == 'prefs'):
         window = PreferencesWindow()
-        window.master.title('Streamlink-Chrome Preferences')
+        window.master.title('Preferences')
         window.master.geometry("300x700")
         window.master.lift()
-        window.master.attributes("-topmost", True)
 
         window.mainloop()
       elif (quality != ''):
@@ -127,8 +128,8 @@ if tkinter:
       w = OptionMenu(self.master, self.dropdown, *OPTIONS)
       w.pack(padx=5, pady=10, side=tkinter.LEFT)
 
-      sendButton = tkinter.Button(self.master, text="Launch", command=self.selectQuality)
-      sendButton.pack(padx=5, pady=10, side=tkinter.LEFT)
+      launchButton = tkinter.Button(self.master, text="Launch", command=self.selectQuality)
+      launchButton.pack(padx=5, pady=10, side=tkinter.LEFT)
 
     def selectQuality(self):
       launch_stream(self.url, self.dropdown.get())
@@ -140,26 +141,28 @@ if tkinter:
       tkinter.Frame.__init__(self)
       self.pack()
 
-      self.text = tkinter.Text(self)
-      self.useBestQuality = IntVar(value=preferences['Use Best Quality'])
-      # tkinter.Checkbutton(self, text="Use Best Quality", variable=self.useBestQuality).grid(row=0, sticky=W)
-      self.text.config(state=tkinter.DISABLED, height=10, width=40)
+      tkinter.Text(self)
+      print(str(preferences))
+      self.useBestQuality = tkinter.BooleanVar(value=preferences['bestQuality']['value'])
+      tkinter.Checkbutton(self, text="Use Best Quality", variable=self.useBestQuality).pack(padx=5, pady=10, side=tkinter.LEFT)
 
-    def updateUiState(self):
-      self.useBestQuality = IntVar(value=preferences['Use Best Quality'])
-      self.master.refresh()
+      saveButton = tkinter.Button(self.master, text="Save Preferences", command=self.savePreferences)
+      saveButton.pack(padx=5, pady=10, side=tkinter.BOTTOM)
+
+    def savePreferences(self):
+      preferences['bestQuality']['value'] = self.useBestQuality.get()
+      save_preferences()
+      self.master.destroy()
 
 def Main():
 
   load_preferences()
-
+  
   aq = queue.Queue()
-
 
   thread = threading.Thread(target=read_thread_func, args=(aq,))
   thread.daemon = True
   thread.start()
-
 
   while True:
     if not aq.empty:

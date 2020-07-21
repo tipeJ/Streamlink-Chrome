@@ -100,7 +100,7 @@ def read_thread_func(aq):
           streamsList = availableStreams.split(', ')
 
           # Show quality options popup window
-          window = NativeMessagingWindow(url, aq, streamsList)
+          window = LaunchStreamlinkWindow(url, aq, streamsList)
           window.master.title('Launch Stream')
           window.master.geometry("175x75")
           window.master.lift()
@@ -112,7 +112,7 @@ def read_thread_func(aq):
       send_message('{"echo": %s}' % decodedJson['url'])
 
 if tkinter:
-  class NativeMessagingWindow(tkinter.Frame):
+  class LaunchStreamlinkWindow(tkinter.Frame):
     def __init__(self, url, queue, OPTIONS):
 
       tkinter.Frame.__init__(self)
@@ -133,7 +133,10 @@ if tkinter:
       launchButton.pack(padx=5, pady=10, side=tkinter.LEFT)
 
     def selectQuality(self):
-      launch_stream(self.url, self.dropdown.get())
+      thread = threading.Thread(target=launch_stream, args=[self.url, self.dropdown.get()])
+      thread.daemon = True
+      thread.start()
+      time.sleep(0.01) # Sleep for a bit so the window daemon has time to start before destroying the window
       self.master.destroy()
       
   class PreferencesWindow(tkinter.Frame):
@@ -156,7 +159,7 @@ if tkinter:
     def savePreferences(self):
       preferences['bestQuality']['value'] = self.useBestQuality.get()
       save_preferences()
-      self.master.destroy()
+      quit()
     
     def quit(self):
       self.master.destroy()

@@ -77,12 +77,13 @@ def read_thread_func(aq):
       if (url == 'prefs'):
         window = PreferencesWindow()
         window.master.title('Preferences')
-        window.master.geometry("300x700")
         window.master.lift()
 
         window.mainloop()
       elif (quality != ''):
         launch_stream(url, quality)
+      elif (preferences['bestQuality']['value']):
+        launch_stream(url, "best")
       else:
         send_message('{"START": "ASD"}')
         
@@ -146,12 +147,18 @@ if tkinter:
       self.useBestQuality = tkinter.BooleanVar(value=preferences['bestQuality']['value'])
       tkinter.Checkbutton(self, text="Use Best Quality", variable=self.useBestQuality).pack(padx=5, pady=10, side=tkinter.LEFT)
 
+      saveButton = tkinter.Button(self.master, text="Cancel", command=self.quit)
+      saveButton.pack(padx=5, pady=10, side=tkinter.LEFT)
+
       saveButton = tkinter.Button(self.master, text="Save Preferences", command=self.savePreferences)
-      saveButton.pack(padx=5, pady=10, side=tkinter.BOTTOM)
+      saveButton.pack(padx=5, pady=10, side=tkinter.RIGHT)
 
     def savePreferences(self):
       preferences['bestQuality']['value'] = self.useBestQuality.get()
       save_preferences()
+      self.master.destroy()
+    
+    def quit(self):
       self.master.destroy()
 
 def Main():

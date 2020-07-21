@@ -14,10 +14,10 @@
   "permissions": [
     "nativeMessaging",
     "declarativeContent",
-    "contextMenus"
+    "contextMenus",
+    "tabs"
   ],
   "page_action": {
-    "default_popup": "main.html"
   },
   "web_accessible_resources": [
     "assets/supportedDomains.txt"

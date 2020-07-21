@@ -1,4 +1,16 @@
+var port = null;
+
+function sendNativeMessage() {
+    message = {
+      "url": document.getElementById('input-text').value,
+      "quality": ''
+    };
+    port.postMessage(message);
+}
+  
 chrome.runtime.onInstalled.addListener(function() {
+    var hostName = "com.google.chrome.example.echo";
+    port = chrome.runtime.connectNative(hostName);
     // Fetch allowed sites
     var allowedDomainsUrl = chrome.extension.getURL("assets/supportedDomains.txt");
         fetch(allowedDomainsUrl).then((response) => {
@@ -41,4 +53,15 @@ chrome.runtime.onInstalled.addListener(function() {
                 
             });
         });
+    
+    chrome.pageAction.onClicked.addListener(function (callback) {
+        chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
+            let url = tabs[0].url;
+            message = {
+                "url": url,
+                "quality": ''
+            };
+            port.postMessage(message);
+        })
+    });
 });

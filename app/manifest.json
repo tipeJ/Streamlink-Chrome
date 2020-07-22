@@ -28,6 +28,10 @@
     {
       "matches": ["https://*.twitch.tv/*"],
       "js": ["twitch_inject.js"]
+    },
+    {
+      "matches": ["https://*.youtube.com/watch*"],
+      "js": ["youtube_inject.js"]
     }
   ]
 }

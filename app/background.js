@@ -14,7 +14,7 @@ function openCurrentUrl() {
         message = {
             "url": url,
             "quality": ''
-          };
+        };
         port.postMessage(message);
     });
 }

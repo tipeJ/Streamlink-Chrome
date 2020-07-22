@@ -145,8 +145,6 @@ if tkinter:
       tkinter.Frame.__init__(self)
       self.pack()
 
-      tkinter.Text(self)
-      print(str(preferences))
       self.useBestQuality = tkinter.BooleanVar(value=preferences['bestQuality']['value'])
       tkinter.Checkbutton(self, text="Use Best Quality", variable=self.useBestQuality).pack(padx=5, pady=10, side=tkinter.LEFT)
 

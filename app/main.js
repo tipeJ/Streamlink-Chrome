@@ -4,60 +4,47 @@
 
 var port = null;
 
-var getKeys = function(obj){
-   var keys = [];
-   for(var key in obj){
-      keys.push(key);
-   }
-   return keys;
+function launchStream() {
+  chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
+      let url = tabs[0].url;
+      message = {
+          "url": url,
+          "quality": ''
+      };
+      port.postMessage(message);
+  })
+  window.close();
 }
 
-
-function appendMessage(text) {
-  document.getElementById('response').innerHTML += "<p>" + text + "</p>";
-}
-
-function updateUiState() {
-  if (port) {
-    document.getElementById('input-text').style.display = 'block';
-    document.getElementById('send-message-button').style.display = 'block';
-  } else {
-    document.getElementById('input-text').style.display = 'none';
-    document.getElementById('send-message-button').style.display = 'none';
-  }
-}
-
-function sendNativeMessage() {
+function openSettings() {
   message = {
-    "url": document.getElementById('input-text').value,
+    "url": "prefs",
     "quality": ''
   };
   port.postMessage(message);
-  appendMessage("Sent message: <b>" + JSON.stringify(message) + "</b>");
+  window.close();
 }
 
 function onNativeMessage(message) {
-  appendMessage("Received message: <b>" + JSON.stringify(message) + "</b>");
+  // appendMessage("Received message: <b>" + JSON.stringify(message) + "</b>");
 }
 
 function onDisconnected() {
-  appendMessage("Failed to connect: " + chrome.runtime.lastError.message);
+  // appendMessage("Failed to connect: " + chrome.runtime.lastError.message);
   port = null;
-  updateUiState();
 }
 
 function connect() {
   var hostName = "com.google.chrome.example.echo";
-  appendMessage("Connecting to native messaging host <b>" + hostName + "</b>")
   port = chrome.runtime.connectNative(hostName);
   port.onMessage.addListener(onNativeMessage);
   port.onDisconnect.addListener(onDisconnected);
-  updateUiState();
 }
 
 document.addEventListener('DOMContentLoaded', function () {
   connect();
   document.getElementById('send-message-button').addEventListener(
-      'click', sendNativeMessage);
-  updateUiState();
+      'click', launchStream);
+      document.getElementById('settings-button').addEventListener(
+        'click', openSettings);
 });

@@ -18,6 +18,7 @@
     "tabs"
   ],
   "page_action": {
+    "default_popup": "main.html"
   },
   "web_accessible_resources": [
     "assets/supportedDomains.txt"

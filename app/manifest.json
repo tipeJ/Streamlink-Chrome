@@ -1,9 +1,9 @@
 {
   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDcBHwzDvyBQ6bDppkIs9MP4ksKqCMyXQ/A52JivHZKh4YO/9vJsT3oaYhSpDCE9RPocOEQvwsHsFReW2nUEc6OLLyoCFFxIb7KkLGsmfakkut/fFdNJYh0xOTbSN8YvLWcqph09XAY2Y/f0AL7vfO1cuCqtkMt8hFrBGWxDdf9CQIDAQAB",
   "manifest_version": 2,
-  "name": "Native Messaging Example",
+  "name": "Streamlink-Chrome",
   "version": "1.0",
-  "description": "Send a message to a native application.",
+  "description": "Launch Livestreams from Youtube/Twitch in a native player. Requires Streamlink to be installed and to be on Path",
   "background": {
     "scripts": ["background.js"],
     "persistent": false
@@ -22,16 +22,21 @@
     "default_popup": "main.html"
   },
   "web_accessible_resources": [
-    "assets/supportedDomains.txt"
+    "assets/supportedDomains.txt",
+    "assets/icon-16.png",
+    "assets/icon-22.png",
+    "assets/button.css"
   ],
   "content_scripts": [
     {
       "matches": ["https://*.twitch.tv/*"],
-      "js": ["twitch_inject.js"]
+      "js": ["twitch_inject.js"],
+      "css" : ["assets/button.css"]
     },
     {
       "matches": ["https://*.youtube.com/watch*"],
-      "js": ["youtube_inject.js"]
+      "js": ["youtube_inject.js"],
+      "css" : ["assets/button.css"]
     }
   ]
 }

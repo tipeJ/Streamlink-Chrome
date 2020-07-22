@@ -7,6 +7,18 @@ function sendNativeMessage() {
     };
     port.postMessage(message);
 }
+
+function openCurrentUrl() {
+    chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
+        let url = tabs[0].url;
+        message = {
+            "url": url,
+            "quality": ''
+          };
+        port.postMessage(message);
+    });
+}
+
   
 chrome.runtime.onInstalled.addListener(function() {
     var hostName = "com.google.chrome.example.echo";
@@ -42,7 +54,7 @@ chrome.runtime.onInstalled.addListener(function() {
                     var end = "*";
                     allowedDomains[i] = item.concat(end);
                 }
-                chrome.contextMenus.create({
+                chrome.contextMenus.create({ // Add contextmenu
                     id: 'asdfa8a9seffesf34',
                     title: "Send to Streamlink",
                     type: 'normal',
@@ -53,19 +65,12 @@ chrome.runtime.onInstalled.addListener(function() {
                 
             });
         });
-    chrome.runtime.onMessage.addListener (
+    chrome.runtime.onMessage.addListener ( // Add listener for contentscript launch events
         function (request, sender, sendResponse) {
             if (request.Message == "launchStream") {
-                chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
-                    let url = tabs[0].url;
-                    message = {
-                        "url": url,
-                        "quality": ''
-                      };
-                    port.postMessage(message);
-                })
-                
+                openCurrentUrl();
             }
         }
     );
+    chrome.contextMenus.onClicked.addListener(function (){openCurrentUrl();}); // Add context menu launcher
 });

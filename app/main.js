@@ -12,7 +12,7 @@ function launchStream() {
           "quality": ''
       };
       port.postMessage(message);
-  })
+  });
   window.close();
 }
 

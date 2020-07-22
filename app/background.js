@@ -53,15 +53,19 @@ chrome.runtime.onInstalled.addListener(function() {
                 
             });
         });
-    
-    // chrome.pageAction.onClicked.addListener(function (callback) {
-    //     chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
-    //         let url = tabs[0].url;
-    //         message = {
-    //             "url": url,
-    //             "quality": ''
-    //         };
-    //         port.postMessage(message);
-    //     })
-    // });
+    chrome.runtime.onMessage.addListener (
+        function (request, sender, sendResponse) {
+            if (request.Message == "launchStream") {
+                chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
+                    let url = tabs[0].url;
+                    message = {
+                        "url": url,
+                        "quality": ''
+                      };
+                    port.postMessage(message);
+                })
+                
+            }
+        }
+    );
 });

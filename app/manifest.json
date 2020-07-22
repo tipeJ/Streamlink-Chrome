@@ -15,12 +15,19 @@
     "nativeMessaging",
     "declarativeContent",
     "contextMenus",
-    "tabs"
+    "tabs",
+    "activeTab"
   ],
   "page_action": {
     "default_popup": "main.html"
   },
   "web_accessible_resources": [
     "assets/supportedDomains.txt"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://*.twitch.tv/*"],
+      "js": ["twitch_inject.js"]
+    }
   ]
 }

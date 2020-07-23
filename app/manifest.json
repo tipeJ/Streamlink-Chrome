@@ -23,7 +23,6 @@
   },
   "web_accessible_resources": [
     "assets/supportedDomains.txt",
-    "assets/icon-16.png",
     "assets/icon-22.png",
     "assets/button.css"
   ],

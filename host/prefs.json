@@ -1,1 +1,4 @@
-{"bestQuality": {"value": false}}
+{
+    "bestQuality": {"value": false},
+    "recordsDirectory": {"value": ""}
+}

@@ -12,6 +12,7 @@ import threading
 import queue
 from tkinter import *
 import tkinter
+from tkinter import filedialog
 import subprocess
 import json
 import time
@@ -47,6 +48,9 @@ def send_message(message):
   sys.stdout.buffer.flush()
 
 def launch_stream(url, quality):
+  options = url
+  if (preferences['record']['value'] and preferences['recordsPath']['value'] != ''):
+    url = url + " -r " + preferences['recordsPath']['value'] + 'test.mp4'
   process = subprocess.Popen(['streamlink', url, quality],
     stdout=subprocess.PIPE, 
     universal_newlines=True)
@@ -78,6 +82,7 @@ def read_thread_func(aq):
         window = PreferencesWindow()
         window.master.title('Preferences')
         window.master.lift()
+        window.master.attributes("-topmost", True)
 
         window.mainloop()
       elif (quality != ''):
@@ -146,13 +151,20 @@ if tkinter:
       self.pack()
 
       self.useBestQuality = tkinter.BooleanVar(value=preferences['bestQuality']['value'])
-      tkinter.Checkbutton(self, text="Use Best Quality", variable=self.useBestQuality).pack(padx=5, pady=10, side=tkinter.LEFT)
+      tkinter.Checkbutton(self, text="Use Best Quality", variable=self.useBestQuality).grid(row=0)
 
-      saveButton = tkinter.Button(self.master, text="Cancel", command=self.quit)
-      saveButton.pack(padx=5, pady=10, side=tkinter.LEFT)
+      self.record = tkinter.BooleanVar(value=preferences['record']['value'])
+      tkinter.Checkbutton(self, text="Record Streams", variable=self.record).grid(row=1)
 
-      saveButton = tkinter.Button(self.master, text="Save Preferences", command=self.savePreferences)
-      saveButton.pack(padx=5, pady=10, side=tkinter.RIGHT)
+      tkinter.Label(self, text="Record output directory").grid(row=2)
+      self.recordPath = tkinter.StringVar(value=preferences['recordsPath']['value'])
+      dir_box = tkinter.Entry(self, textvariable = self.recordPath).grid(row=2, column=1)
+
+      tkinter.Button(self, text="Set a directory", command=self.recordsDirectoryCallback).grid(row=2, column = 2)
+
+      tkinter.Button(self, text="Cancel", command=self.quit).grid(row=3)
+
+      tkinter.Button(self, text="Save Preferences", command=self.savePreferences).grid(row=3, column=1, padx=14)
 
     def savePreferences(self):
       preferences['bestQuality']['value'] = self.useBestQuality.get()
@@ -161,6 +173,10 @@ if tkinter:
     
     def quit(self):
       self.master.destroy()
+
+    def recordsDirectoryCallback(self):
+      filename = filedialog.askdirectory()
+      self.recordPath.set(filename)
 
 def Main():
 

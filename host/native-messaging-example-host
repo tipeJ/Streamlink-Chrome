@@ -48,9 +48,9 @@ def send_message(message):
   sys.stdout.buffer.flush()
 
 def launch_stream(url, quality):
-  options = url
+  recordOptions = ""
   if (preferences['record']['value'] and preferences['recordsPath']['value'] != ''):
-    url = url + " -r " + preferences['recordsPath']['value'] + 'test.mp4'
+    recordOptions = '-r {title}'
   process = subprocess.Popen(['streamlink', url, quality],
     stdout=subprocess.PIPE, 
     universal_newlines=True)
@@ -168,6 +168,8 @@ if tkinter:
 
     def savePreferences(self):
       preferences['bestQuality']['value'] = self.useBestQuality.get()
+      preferences['record']['value'] = self.record.get()
+      preferences['recordsPath']['value'] = self.recordPath.get()
       save_preferences()
       quit()
     

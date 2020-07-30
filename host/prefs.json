@@ -1,6 +1,9 @@
 {
     "bestQuality": {"value": false},
     "record": {"value": false},
-    "recordExtension": {"value": "mp4"},
+    "recordExtension": {
+        "value": "mp4",
+        "default": "mp4"
+    },
     "recordsPath": {"value": ""}
 }

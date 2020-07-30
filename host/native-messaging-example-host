@@ -13,6 +13,7 @@ import queue
 from tkinter import *
 import tkinter
 from tkinter import filedialog
+from datetime import datetime
 import subprocess
 import json
 import time
@@ -26,6 +27,13 @@ if sys.platform == "win32":
   msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
 
 preferences = {}
+
+# Get a preference from prefs file. If entry is empty or null, fetch default value
+def pref(name):
+  preference = preferences[name]['value']
+  if (preference is None or preference == ""):
+    preference = preferences[name]['default']
+  return preference
 
 def load_preferences():
   global preferences
@@ -48,9 +56,11 @@ def send_message(message):
   sys.stdout.buffer.flush()
 
 def launch_stream(url, quality):
+  load_preferences()
   recordOptions = ""
   if (preferences['record']['value'] and preferences['recordsPath']['value'] != ''):
-    recordOptions = '-r YEPNOP.mp4'
+    fileExtension = pref('recordExtension')
+    recordOptions = '-r {}_{}.{}'.format(url.split('.')[-1].replace('/', '_'), datetime.now().strftime("%d-%m-%Y_%H-%M-%S"), fileExtension) # Initialize recorded file destination
     path = preferences['recordsPath']['value'].replace("/", "\\")
     process = subprocess.Popen(['streamlink', url, quality, recordOptions],
       stdout=subprocess.PIPE,
@@ -202,6 +212,8 @@ def Main():
   thread = threading.Thread(target=read_thread_func, args=(aq,))
   thread.daemon = True
   thread.start()
+
+  print('-r {}_{}.mp4'.format("twitch.tv/raeyei", datetime.now().strftime("%d/%m/%Y_%H-%M-%S")))
 
   while True:
     if not aq.empty:

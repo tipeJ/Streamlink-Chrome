@@ -164,6 +164,10 @@ if tkinter:
       self.record = tkinter.BooleanVar(value=preferences['record']['value'])
       tkinter.Checkbutton(self, text="Record Streams", variable=self.record).grid(row=1)
 
+      tkinter.Label(self, text="Record file extension").grid(row=1, column=1)
+      self.recordExtension = tkinter.StringVar(value=preferences['recordExtension']['value'])
+      tkinter.Entry(self, textvariable=self.recordExtension).grid(row=1, column=2)
+
       tkinter.Label(self, text="Record output directory").grid(row=2)
       self.recordPath = tkinter.StringVar(value=preferences['recordsPath']['value'])
       dir_box = tkinter.Entry(self, textvariable = self.recordPath).grid(row=2, column=1)
@@ -178,6 +182,7 @@ if tkinter:
       preferences['bestQuality']['value'] = self.useBestQuality.get()
       preferences['record']['value'] = self.record.get()
       preferences['recordsPath']['value'] = self.recordPath.get()
+      preferences['recordExtension']['value'] = self.recordExtension.get()
       save_preferences()
       quit()
     

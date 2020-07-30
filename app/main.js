@@ -5,13 +5,7 @@
 var port = null;
 
 function launchStream() {
-  chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
-      let url = tabs[0].url;
-      message = {
-          "url": url,
-          "quality": ''
-      };
-      port.postMessage(message);
+  chrome.runtime.sendMessage({Message: "launchStream"}, function (response) {
   });
   window.close();
 }

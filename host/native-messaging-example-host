@@ -50,12 +50,20 @@ def send_message(message):
 def launch_stream(url, quality):
   recordOptions = ""
   if (preferences['record']['value'] and preferences['recordsPath']['value'] != ''):
-    recordOptions = '-r {title}'
-  process = subprocess.Popen(['streamlink', url, quality],
-    stdout=subprocess.PIPE, 
-    universal_newlines=True)
-  stdout, stderr = process.communicate()
-  stdout, stderr
+    recordOptions = '-r YEPNOP.mp4'
+    path = preferences['recordsPath']['value'].replace("/", "\\")
+    process = subprocess.Popen(['streamlink', url, quality, recordOptions],
+      stdout=subprocess.PIPE,
+      cwd=r"{}".format(path),
+      universal_newlines=True)
+    stdout, stderr = process.communicate()
+    stdout, stderr
+  else:
+    process = subprocess.Popen(['streamlink', url, quality],
+      stdout=subprocess.PIPE, 
+      universal_newlines=True)
+    stdout, stderr = process.communicate()
+    stdout, stderr
 
 # Thread that reads messages from the webapp.
 def read_thread_func(aq):
@@ -90,7 +98,7 @@ def read_thread_func(aq):
       elif (preferences['bestQuality']['value']):
         launch_stream(url, "best")
       else:
-        send_message('{"START": "ASD"}')
+        # send_message('{"START": "ASD"}')
         
         aq.put(url)
         process = subprocess.Popen(['streamlink', url],

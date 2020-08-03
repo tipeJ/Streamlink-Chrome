@@ -4,19 +4,20 @@
 
 function launchStream() {
   chrome.runtime.sendMessage({Message: "launchStream"}, function (response) {
+    window.close();
   });
-  window.close();
 }
 
 function openSettings() {
-  message = "prefs";
-  port.postMessage(message);
-  window.close();
+  chrome.runtime.sendMessage({Message: "prefs"}, function (response) {
+    window.close();
+  });
+  
 }
 
 document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('send-message-button').addEventListener(
       'click', launchStream);
-      document.getElementById('settings-button').addEventListener(
-        'click', openSettings);
+    document.getElementById('settings-button').addEventListener(
+      'click', openSettings);
 });

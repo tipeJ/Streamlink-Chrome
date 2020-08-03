@@ -72,6 +72,7 @@ chrome.runtime.onInstalled.addListener(function() {
             });
         });
     chrome.runtime.onMessage.addListener ( // Add listener for contentscript launch events
+        
         function (request, sender, sendResponse) {
             if (request.Message == "launchStream") {
                 openCurrentUrl();
@@ -82,6 +83,10 @@ chrome.runtime.onInstalled.addListener(function() {
                 };
                 port.postMessage(message);
             }
+            setTimeout(function() {
+                sendResponse({status: true});
+            }, 1);
+            return true;
         }
     );
     chrome.contextMenus.onClicked.addListener(function (){openCurrentUrl();}); // Add context menu launcher

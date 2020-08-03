@@ -23,6 +23,12 @@ function openCurrentUrl() {
 chrome.runtime.onInstalled.addListener(function() {
     var hostName = "com.google.chrome.example.echo";
     port = chrome.runtime.connectNative(hostName);
+    port.onMessage.addListener(function(msg) {
+        console.log("Received" + msg);
+    });
+      port.onDisconnect.addListener(function() {
+        console.log("Disconnected");
+    });
     // Fetch allowed sites
     var allowedDomainsUrl = chrome.extension.getURL("assets/supportedDomains.txt");
         fetch(allowedDomainsUrl).then((response) => {
@@ -69,6 +75,12 @@ chrome.runtime.onInstalled.addListener(function() {
         function (request, sender, sendResponse) {
             if (request.Message == "launchStream") {
                 openCurrentUrl();
+            } else {
+                message = {
+                    "url": request.Message,
+                    "quality": ''
+                };
+                port.postMessage(message);
             }
         }
     );

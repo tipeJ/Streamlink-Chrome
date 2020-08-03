@@ -106,11 +106,11 @@ def read_thread_func(aq):
       elif (quality != ''):
         launch_stream(url, quality)
       elif (preferences['bestQuality']['value']):
+        send_message('{"START": "Launch stream with best available quality"}')
         launch_stream(url, "best")
       else:
-        # send_message('{"START": "ASD"}')
+        send_message('{"START": "Launch Stream Quality Options"}')
         
-        aq.put(url)
         process = subprocess.Popen(['streamlink', url],
           stdout=subprocess.PIPE, 
           universal_newlines=True)

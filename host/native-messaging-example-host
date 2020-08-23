@@ -116,7 +116,7 @@ def read_thread_func(aq):
           universal_newlines=True)
 
         response = process.stdout.readlines()
-        if (len(response) != 1): # Check that process returned available streams.
+        if (len(response) != 1 and not response[1].startswith("error")): # Check that process returned available streams.
           availableStreams = response[1].strip()
           for r in ["Available streams: ", " (best)", " (worst)"]: # Remove useless info.
             availableStreams = availableStreams.replace(r, "")
@@ -159,7 +159,7 @@ if tkinter:
       thread = threading.Thread(target=launch_stream, args=[self.url, self.dropdown.get()])
       thread.daemon = True
       thread.start()
-      time.sleep(0.01) # Sleep for a bit so the window daemon has time to start before destroying the window
+      time.sleep(0.1) # Sleep for a bit so the window daemon has time to start before destroying the window
       self.master.destroy()
       
   class PreferencesWindow(tkinter.Frame):

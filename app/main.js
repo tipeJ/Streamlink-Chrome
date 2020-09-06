@@ -37,36 +37,43 @@ function addFavourite() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  document.getElementById('send-message-button').addEventListener(
+  document.getElementById('launch-button').addEventListener(
       'click', launchStream);
   document.getElementById('settings-button').addEventListener(
     'click', openSettings);
   document.getElementById('add-favourite-button').addEventListener(
     'click', addFavourite);
+  chrome.storage.local.onChanged.addListener(function(changes, namescape) {
+    location.reload();
+  });
   chrome.storage.local.get(null, function(items) {
     var allKeys = Object.keys(items);
     var allValues = Object.values(items);
     for (var i = 0; i < allKeys.length; i++) {
-      var para = document.createElement("p");
+      var para = document.getElementById('maingrid');
 
       var link = document.createElement("a");
       link.innerHTML = allValues[i];
       link.setAttribute('href', allKeys[i]);
       link.setAttribute('target', "_blank");
+      link.className = "favourite-link";
       para.appendChild(link);
 
       var removeButton = document.createElement("button");
-      removeButton.innerHTML = "X";
+      removeButton.addEventListener('click', function(){
+        chrome.storage.local.remove(allKeys[i], function(){
+          
+        });
+      });
+      removeButton.className = "favourite-remove fas fa-times"
       para.append(removeButton);
 
       var playButton = document.createElement("button");
       playButton.addEventListener('click', function(){
         launchSpecificStream(allKeys[i]);
       });
-      playButton.innerHTML = ">";
+      playButton.className = "favourite-play fas fa-play"
       para.append(playButton);
-      
-      document.getElementById('favourites-container').appendChild(para);
     }
   });
 });

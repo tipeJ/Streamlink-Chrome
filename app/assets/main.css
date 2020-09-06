@@ -1,0 +1,69 @@
+body {
+    background-color: #1d1d1f;
+    color: white;
+}
+
+.container {
+    display: grid;
+    margin: 6px;
+    column-gap: 5px;
+    row-gap: 5px;
+    columns: 3;
+    grid-template-columns: 9fr 1fr 1fr;
+    width: 175px;
+}
+
+button {
+    background-color: #30323600;
+    border: none;
+    color: white;
+    padding: 4px 4px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+}
+
+.icon-button {
+    color: #ffffff96;
+}
+
+#launch-button {
+    background-color: #44584d;
+    padding: 6px;
+    grid-column: 1 / span 2;
+    grid-row-start: 1;
+}
+
+#settings-button {
+    grid-column: 3;
+    grid-row-start: 1;
+}
+
+#favourites-title {
+    grid-column: 1 / span 2;
+    grid-row-start: 2;
+}
+
+#favourites-button {
+    grid-column: 3;
+    grid-row-start: 2;
+}
+
+.favourite-link {
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap;
+}
+
+.favourite-remove {
+    grid-column: 2;
+    min-width: 0;
+    grid-column: 2;
+}
+
+.favourite-play {
+    grid-column: 3;
+    min-width: 0;
+    grid-column: 3;
+}

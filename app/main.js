@@ -61,9 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       var removeButton = document.createElement("button");
       removeButton.addEventListener('click', function(){
-        chrome.storage.local.remove(allKeys[i], function(){
-          
-        });
+        chrome.storage.local.remove([allKeys[i]]);
       });
       removeButton.className = "favourite-remove fas fa-times"
       para.append(removeButton);

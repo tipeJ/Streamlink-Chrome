@@ -21,7 +21,7 @@ function openCurrentUrl() {
 
   
 chrome.runtime.onInstalled.addListener(function() {
-    var hostName = "com.google.chrome.example.echo";
+    var hostName = "com.google.chrome.tipej.streamlinkchrome";
     port = chrome.runtime.connectNative(hostName);
     port.onMessage.addListener(function(msg) {
         console.log("Received" + msg);

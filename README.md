@@ -17,5 +17,9 @@ Install the extension via chrome extensions manager (Required developer mode to 
 
 ## Screenshots
 ![Main Screen](/images/Main.png)
+
 ![Settings Screen](/images/Settings.png)
+
 ![Page Action](/images/Action.png)
+
+![Player Button Injection](/images/twitch_inject.png)

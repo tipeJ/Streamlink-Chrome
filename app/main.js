@@ -2,14 +2,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Launches current tab url in streamlink
 function launchStream() {
   chrome.runtime.sendMessage({Message: "launchStream"}, function (response) {
     window.close();
   });
 }
 
-function launchSpecificStream(url) {
-  chrome.runtime.sendMessage({Message: url}, function (response) {
+// Launch specific URL from favourites
+const launchSpecificStream = function (event) {
+  const button = event.target;
+  var key = button.getAttribute("key");
+  console.log("KEY: " + key);
+  chrome.runtime.sendMessage({Message: key}, function (response) {
     window.close();
   });
 }
@@ -21,21 +26,29 @@ function openSettings() {
   
 }
 
+// Adds url to favourites
 function addFavourite() {
-  console.log("BEGINFAVOURITE");
   chrome.storage.local.get(null, function(items) {
     var allKeys = Object.keys(items);
     chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
         var currentUrl = tabs[0].url;
         if (allKeys[currentUrl] == null) {
-          chrome.storage.local.set({[currentUrl]: [tabs[0].title]}, function() {
-            console.log("Added favourite");
-          });
+          var obj = {};
+          obj[currentUrl] = tabs[0].title;
+          chrome.storage.local.set(obj);
         }
     });
   });
 }
 
+// Removes url from favourites
+const removeFavourite = function (event) {
+  const button = event.target;
+  var key = button.getAttribute("key");
+  chrome.storage.local.remove([key]);
+}
+
+// Add the content for the main extension screen.
 document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('launch-button').addEventListener(
       'click', launchStream);
@@ -60,16 +73,16 @@ document.addEventListener('DOMContentLoaded', function () {
       para.appendChild(link);
 
       var removeButton = document.createElement("button");
-      removeButton.addEventListener('click', function(){
-        chrome.storage.local.remove([allKeys[i]]);
-      });
+      removeButton.id = "remove_" + i;
       removeButton.className = "favourite-remove fas fa-times"
+      removeButton.setAttribute("key", allKeys[i]);
+
+      removeButton.addEventListener('click', removeFavourite);
       para.append(removeButton);
 
       var playButton = document.createElement("button");
-      playButton.addEventListener('click', function(){
-        launchSpecificStream(allKeys[i]);
-      });
+      playButton.setAttribute("key", allKeys[i]);
+      playButton.addEventListener('click', launchSpecificStream);
       playButton.className = "favourite-play fas fa-play"
       para.append(playButton);
     }

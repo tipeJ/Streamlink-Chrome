@@ -15,6 +15,6 @@ Run the host installation script in host folder after extraction. (.bat file for
 Install the extension via chrome extensions manager (Required developer mode to be on)
 
 ## Screenshots
-![Main Screen][/images/Main.png]
-![Settings Screen][/images/Settings.png]
-![Page Action][/images/Action.png]
+![Main Screen](/images/Main.png)
+![Settings Screen](/images/Settings.png)
+![Page Action](/images/Action.png)

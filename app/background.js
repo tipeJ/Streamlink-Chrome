@@ -19,7 +19,6 @@ function openCurrentUrl() {
     });
 }
 
-  
 chrome.runtime.onInstalled.addListener(function() {
     var hostName = "com.google.chrome.tipej.streamlinkchrome";
     port = chrome.runtime.connectNative(hostName);
@@ -71,9 +70,11 @@ chrome.runtime.onInstalled.addListener(function() {
                 
             });
         });
+    console.log("Adding runtime listener");
     chrome.runtime.onMessage.addListener ( // Add listener for contentscript launch events
         
         function (request, sender, sendResponse) {
+            console.log("Received runtime message:" + request.Message);
             if (request.Message == "launchStream") {
                 openCurrentUrl();
             } else {

@@ -12,6 +12,7 @@ Currently used via extension's main.html, which can be used to launch an url. Au
 
 Run the host installation script in host folder after extraction. (.bat file for windows, .sh file for linux)
 
+Install Streamlink and Python 3.xx, and add both to the PATH environment variable.
 Install the extension via chrome extensions manager (Required developer mode to be on)
 
 ## Screenshots

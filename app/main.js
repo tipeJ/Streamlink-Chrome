@@ -4,9 +4,35 @@
 
 // Launches current tab url in streamlink
 function launchStream() {
-  chrome.runtime.sendMessage({Message: "launchStream"}, function (response) {
-    window.close();
-  });
+  // Check if any checkboxes are checked
+  var checkboxes = document.getElementsByClassName("favourite-checkbox");
+  var checked = false;
+  for (var i = 0; i < checkboxes.length; i++) {
+    if (checkboxes[i].checked) {
+      checked = true;
+      break;
+    }
+  }
+  // If no checkboxes are checked, launch current tab
+  if (!checked){
+    chrome.runtime.sendMessage({Message: "launchStream"}, function (response) {
+      window.close();
+    });
+  } else {
+    // Launch all checked urls. Supply as a CSV
+    var urls = "";
+    for (var i = 0; i < checkboxes.length; i++) {
+      if (checkboxes[i].checked) {
+        var key = checkboxes[i].getAttribute("key");
+        urls += key + ",";
+      }
+    }
+    urls = urls.slice(0, -1);
+    console.log(urls);
+    chrome.runtime.sendMessage({Message: urls}, function (response) {
+      window.close();
+    });
+  }
 }
 
 // Launch specific URL from favourites
@@ -69,6 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
       checkbox.type = "checkbox";
       checkbox.id = "checkbox_" + i;
       checkbox.className = "favourite-checkbox";
+      checkbox.setAttribute("key", allKeys[i]);
       para.appendChild(checkbox);
 
       var link = document.createElement("a");

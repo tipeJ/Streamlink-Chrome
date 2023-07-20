@@ -57,7 +57,7 @@ chrome.runtime.onMessage.addListener ( // Add listener for contentscript launch 
         if (request.Message == "launchStream") {
             openCurrentUrl();
         } else {
-            message = {
+            var message = {
                 "url": request.Message,
                 "quality": ''
             };

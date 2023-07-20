@@ -50,25 +50,34 @@ def send_message(message):
   sys.stdout.buffer.write(struct.pack(str(len(encoded_content))+"s",encoded_content))
   sys.stdout.buffer.flush()
 
-def launch_stream(url, quality):
+def launch_stream(url_param, quality):
   load_preferences()
   recordOptions = ""
-  if (preferences['record']['value'] and preferences['recordsPath']['value'] != ''):
-    fileExtension = pref('recordExtension')
-    recordOptions = '-r {}_{}.{}'.format(url.split('.')[-1].replace('/', '_'), datetime.now().strftime("%d-%m-%Y_%H-%M-%S"), fileExtension) # Initialize recorded file destination
-    path = preferences['recordsPath']['value'].replace("/", "\\")
-    process = subprocess.Popen(['streamlink', url, quality, recordOptions],
-      stdout=subprocess.PIPE,
-      cwd=r"{}".format(path),
-      universal_newlines=True)
-    stdout, stderr = process.communicate()
-    stdout, stderr
+  # Check if url is a list of urls separated by a comma.
+  if ("," in url_param):
+    for url in url_param.split(","):
+      # Thread each url in the list.
+      thread = threading.Thread(target=launch_stream, args=[url, quality])
+      thread.daemon = True
+      thread.start()
   else:
-    process = subprocess.Popen(['streamlink', url, quality],
-      stdout=subprocess.PIPE, 
-      universal_newlines=True)
-    stdout, stderr = process.communicate()
-    stdout, stderr
+    url = url_param
+    if (preferences['record']['value'] and preferences['recordsPath']['value'] != ''):
+      fileExtension = pref('recordExtension')
+      recordOptions = '-r {}_{}.{}'.format(url.split('.')[-1].replace('/', '_'), datetime.now().strftime("%d-%m-%Y_%H-%M-%S"), fileExtension) # Initialize recorded file destination
+      path = preferences['recordsPath']['value'].replace("/", "\\")
+      process = subprocess.Popen(['streamlink', url, quality, recordOptions],
+        stdout=subprocess.PIPE,
+        cwd=r"{}".format(path),
+        universal_newlines=True)
+      stdout, stderr = process.communicate()
+      stdout, stderr
+    else:
+      process = subprocess.Popen(['streamlink', url, quality],
+        stdout=subprocess.PIPE, 
+        universal_newlines=True)
+      stdout, stderr = process.communicate()
+      stdout, stderr
 
 # Thread that reads messages from the webapp.
 def read_thread_func(aq):
@@ -105,6 +114,10 @@ def read_thread_func(aq):
         launch_stream(url, "best")
       else:
         send_message('{"START": "Launch Stream Quality Options"}')
+        # Check if url contains multiple url's separated by a comma.
+        if ("," in url):
+          urllist = url
+          url = url.split(",")[0]
         
         process = subprocess.Popen(['streamlink', url],
           stdout=subprocess.PIPE, 
@@ -118,7 +131,7 @@ def read_thread_func(aq):
           streamsList = availableStreams.split(', ')
 
           # Show quality options popup window
-          window = LaunchStreamlinkWindow(url, aq, streamsList)
+          window = LaunchStreamlinkWindow(urllist, aq, streamsList)
           window.master.title('Launch Stream')
           window.master.geometry("175x75")
           window.master.lift()

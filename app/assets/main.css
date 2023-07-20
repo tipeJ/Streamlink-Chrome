@@ -9,7 +9,7 @@ body {
     column-gap: 5px;
     row-gap: 5px;
     columns: 3;
-    grid-template-columns: 9fr 1fr 1fr;
+    grid-template-columns: 1fr 9fr 1fr 1fr;
     width: 175px;
 }
 
@@ -31,12 +31,12 @@ button {
 #launch-button {
     background-color: #44584d;
     padding: 6px;
-    grid-column: 1 / span 2;
+    grid-column: 1 / span 3;
     grid-row-start: 1;
 }
 
 #settings-button {
-    grid-column: 3;
+    grid-column: 4;
     grid-row-start: 1;
 }
 
@@ -57,13 +57,16 @@ button {
 }
 
 .favourite-remove {
-    grid-column: 2;
+    grid-column: 3;
     min-width: 0;
-    grid-column: 2;
 }
 
 .favourite-play {
-    grid-column: 3;
+    grid-column: 4;
     min-width: 0;
-    grid-column: 3;
+}
+
+.favourite-checkbox {
+    grid-column: 1;
+    min-width: 10px;
 }

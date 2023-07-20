@@ -65,6 +65,12 @@ document.addEventListener('DOMContentLoaded', function () {
     for (var i = 0; i < allKeys.length; i++) {
       var para = document.getElementById('maingrid');
 
+      var checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.id = "checkbox_" + i;
+      checkbox.className = "favourite-checkbox";
+      para.appendChild(checkbox);
+
       var link = document.createElement("a");
       link.innerHTML = allValues[i];
       link.setAttribute('href', allKeys[i]);

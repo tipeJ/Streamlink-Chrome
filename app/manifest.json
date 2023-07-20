@@ -1,12 +1,12 @@
 {
   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDcBHwzDvyBQ6bDppkIs9MP4ksKqCMyXQ/A52JivHZKh4YO/9vJsT3oaYhSpDCE9RPocOEQvwsHsFReW2nUEc6OLLyoCFFxIb7KkLGsmfakkut/fFdNJYh0xOTbSN8YvLWcqph09XAY2Y/f0AL7vfO1cuCqtkMt8hFrBGWxDdf9CQIDAQAB",
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Streamlink-Chrome",
   "version": "1.0",
   "description": "Launch Livestreams from Youtube/Twitch in a native player. Requires Streamlink to be installed and to be on Path",
   "background": {
-    "scripts": ["background.js"],
-    "persistent": false
+    "service_worker": "background.js",
+    "type": "module"
   },
   "icons": {
     "128": "assets/icon-128.png"
@@ -19,14 +19,19 @@
     "storage",
     "activeTab"
   ],
-  "browser_action": {
+  "action": {
     "default_popup": "main.html"
   },
   "web_accessible_resources": [
-    "assets/supportedDomains.txt",
-    "assets/icon-22.png",
-    "assets/icon.svg",
-    "assets/button.css"
+    {
+      "resources": [
+        "assets/supportedDomains.txt",
+        "assets/icon-22.png",
+        "assets/icon.svg",
+        "assets/button.css"
+      ],
+      "matches": ["<all_urls>"]
+    }
   ],
   "content_scripts": [
     {

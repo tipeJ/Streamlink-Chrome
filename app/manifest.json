@@ -2,7 +2,7 @@
   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDcBHwzDvyBQ6bDppkIs9MP4ksKqCMyXQ/A52JivHZKh4YO/9vJsT3oaYhSpDCE9RPocOEQvwsHsFReW2nUEc6OLLyoCFFxIb7KkLGsmfakkut/fFdNJYh0xOTbSN8YvLWcqph09XAY2Y/f0AL7vfO1cuCqtkMt8hFrBGWxDdf9CQIDAQAB",
   "manifest_version": 3,
   "name": "Streamlink-Chrome",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Launch Livestreams from Youtube/Twitch in a native player. Requires Streamlink to be installed and to be on Path",
   "background": {
     "service_worker": "background.js",

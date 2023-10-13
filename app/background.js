@@ -1,7 +1,7 @@
 var port = null;
 
 function sendNativeMessage() {
-    message = {
+    let message = {
       "url": document.getElementById('input-text').value,
       "quality": ''
     };
@@ -11,7 +11,7 @@ function sendNativeMessage() {
 function openCurrentUrl() {
     chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
         let url = tabs[0].url;
-        message = {
+        let message = {
             "url": url,
             "quality": ''
         };

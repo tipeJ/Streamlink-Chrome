@@ -115,8 +115,8 @@ def read_thread_func(aq):
       else:
         send_message('{"START": "Launch Stream Quality Options"}')
         # Check if url contains multiple url's separated by a comma.
+        urllist = url
         if ("," in url):
-          urllist = url
           url = url.split(",")[0]
         
         process = subprocess.Popen(['streamlink', url],

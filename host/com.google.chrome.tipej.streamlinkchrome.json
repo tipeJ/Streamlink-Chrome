@@ -1,7 +1,7 @@
 {
   "name": "com.google.chrome.tipej.streamlinkchrome",
   "description": "Chrome Native Messaging API Example Host",
-  "path": "HOST_PATH",
+  "path": "/home/tipej/Documents/Projects/Web/Streamlink-Chrome/host/native-messaging-example-host.sh",
   "type": "stdio",
   "allowed_origins": [
     "chrome-extension://knldjmfmopnpolahpmmgbagdohdnhkik/"

@@ -19,7 +19,9 @@ else
   fi
 fi
 
-HOST_NAME=com.google.chrome.example.echo
+# Print target dir
+echo $TARGET_DIR
+HOST_NAME=com.google.chrome.tipej.streamlinkchrome
 
 # Create directory to store native messaging host.
 mkdir -p "$TARGET_DIR"

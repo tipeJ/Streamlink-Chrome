@@ -9,6 +9,8 @@ A Chrome extension for opening livestreams via streamlink, from your browser.
 Currently used via extension's main.html, which can be used to launch an url. Automatically selects best available quality for stream. Adjusting quality will be added in the future.
 
 ## Installation
+If you are on Linux, replace the "native-messaging-example-host.sh" with the absolute path of the script in your system in the JSON field "path" in host/com.google.chrome.tipej.streamlinkchrome.json.
+
 
 Run the host installation script in host folder after extraction. (.bat file for windows, .sh file for linux)
 
